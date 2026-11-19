@@ -1,4 +1,4 @@
-import {
+import type {
   RegisterRequest,
   RegisterResponse,
   LoginRequest,
@@ -7,7 +7,7 @@ import {
   DashboardData,
   PersonalInfo,
   ChecklistProgress,
-} from ".../types/onboarding";
+} from "../types/onboarding";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
@@ -38,12 +38,9 @@ async function apiRequest<T>(
 
   if (!response.ok) {
     if (isJson && data) {
-      const firstFieldError = Object.values(data.errors)[0];
-      throw new Error(String(firstFieldError));
-    }
-
-    if (data.message) {
-      throw new Error(data.message);
+      if (data.message) {
+        throw new Error(data.message);
+      }
     }
     throw new Error(
       typeof data === "string" && data
@@ -58,13 +55,13 @@ async function apiRequest<T>(
 export const api = {
   // Auth Endpoints
   register: (payload: RegisterRequest) =>
-    apiRequest<RegisterRequest>("/auth/register", {
+    apiRequest<RegisterResponse>("/auth/register", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
 
   login: (payload: LoginRequest) =>
-    apiRequest("/auth/login", {
+    apiRequest<LoginResponse>("/auth/login", {
       method: "POST",
       body: JSON.stringify(payload),
     }),
@@ -79,34 +76,34 @@ export const api = {
   savePersonalInfo: (payload: PersonalInfo) =>
     apiRequest("/onboarding/personal-info", {
       method: "PUT",
-      body: JSON.stringinfy(payload),
+      body: JSON.stringify(payload),
     }),
 
   getCompanyIntro: () => apiRequest<string>("/onboarding/company-intro"),
 
   markCompanyIntroRead: () =>
-    apiRequest<boolean>("/onboarding-company-intro", {
+    apiRequest<boolean>("/onboarding/company-intro", {
       method: "PUT",
     }),
 
-  getCompanyPolicy: () => apiRequest<string>("onboarding/company-policy"),
+  getCompanyPolicy: () => apiRequest<string>("/onboarding/company-policy"),
 
   acknowledgeCompanyPolicy: () =>
-    apiRequest<boolean>("onboarding/company-policy", {
+    apiRequest<boolean>("/onboarding/company-policy", {
       method: "PUT",
     }),
 
   getJoiningChecklist: () =>
-    apiRequest<boolean[]>("onboarding/joining-checklist"),
+    apiRequest<ChecklistProgress>("/onboarding/joining-checklist"),
 
   saveJoiningChecklist: (payload: ChecklistProgress) =>
-    apiRequest<boolean>("onboarding/joining-checklist", {
-      method: "POST",
+    apiRequest<ChecklistProgress>("/onboarding/joining-checklist", {
+      method: "PUT",
       body: JSON.stringify(payload),
     }),
 
   confirmOnboarding: () =>
-    apiRequest<string>("onboarding/final-confirmation", {
+    apiRequest<string>("/onboarding/final-confirmation", {
       method: "POST",
     }),
 };

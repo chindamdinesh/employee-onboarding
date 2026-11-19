@@ -1,122 +1,108 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { AuthScreen } from "./screens/AuthScreen";
+import { ChecklistScreen } from "./screens/ChecklistScreen";
+import { CompanyIntroScreen } from "./screens/CompanyIntroScreen";
+import { CompanyPolicyScreen } from "./screens/CompanyPolicyScreen";
+import { DashboardScreen, type ScreenName } from "./screens/DashboardScreen";
+import { PersonalInfoScreen } from "./screens/PersonalInfoScreen";
+import { FinalConfirmScreen } from "./screens/FinalConfirmScreen";
+import { ProfileScreen } from "./screens/ProfileScreen";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token"),
+  );
+  const [currentScreen, setCurrentScreen] = useState<ScreenName>("dashboard");
+
+  const handleLoginSuccess = (jwtToken: string) => {
+    setToken(jwtToken);
+    setCurrentScreen("dashboard");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    setToken(null);
+    setCurrentScreen("dashboard");
+  };
+
+  // Conditionally render AuthScreen when not logged in (Enforces QA-13 on Logout!)
+  if (!token) {
+    return (
+      <div className="app-shell">
+        <header className="top-nav">
+          <span className="brand">Company Onboarding Portal</span>
+        </header>
+        <main className="main-content">
+          <AuthScreen onLoginSuccess={handleLoginSuccess} />
+        </main>
+      </div>
+    );
+  }
+
+  // Conditionally render the selected screen component inside the Parent container
+  const renderActiveScreen = () => {
+    switch (currentScreen) {
+      case "step1":
+        return (
+          <PersonalInfoScreen onBack={() => setCurrentScreen("dashboard")} />
+        );
+      case "step2":
+        return (
+          <CompanyIntroScreen onBack={() => setCurrentScreen("dashboard")} />
+        );
+      case "step3":
+        return (
+          <CompanyPolicyScreen onBack={() => setCurrentScreen("dashboard")} />
+        );
+      case "step4":
+        return <ChecklistScreen onBack={() => setCurrentScreen("dashboard")} />;
+      case "step5":
+        return (
+          <FinalConfirmScreen onBack={() => setCurrentScreen("dashboard")} />
+        );
+      case "profile":
+        return <ProfileScreen onBack={() => setCurrentScreen("dashboard")} />;
+      case "dashboard":
+      default:
+        return (
+          <DashboardScreen onSelectStep={(step) => setCurrentScreen(step)} />
+        );
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+    <div className="app-shell">
+      <header className="top-nav">
+        <span
+          className="brand clickable"
+          onClick={() => setCurrentScreen("dashboard")}
         >
-          Count is {count}
-        </button>
-      </section>
+          Employee Onboarding
+        </span>
+        <nav className="nav-actions">
+          <button
+            type="button"
+            className="btn-nav"
+            onClick={() => setCurrentScreen("dashboard")}
+          >
+            Dashboard
+          </button>
+          <button
+            type="button"
+            className="btn-nav"
+            onClick={() => setCurrentScreen("profile")}
+          >
+            Profile
+          </button>
+          <button type="button" className="btn-logout" onClick={handleLogout}>
+            Logout
+          </button>
+        </nav>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main className="main-content">{renderActiveScreen()}</main>
+    </div>
+  );
 }
-
-export default App
