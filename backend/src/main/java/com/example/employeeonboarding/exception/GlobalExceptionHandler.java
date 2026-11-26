@@ -1,13 +1,17 @@
 package com.example.employeeonboarding.exception;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import tools.jackson.databind.exc.InvalidFormatException;
 
 @RestControllerAdvice // Listens for exceptions across ALL @RestControllers
 public class GlobalExceptionHandler {
@@ -31,6 +35,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleConflict(ConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT) // 409
                 .body(Map.of("message", ex.getMessage()));
+    }
+    
+    public ResponseEntity<Map<String, String>> handleUnreadableMessage(HttpMessageNotReadableException ex) {
+    	String message = "Invalid request format. Please check your input values.";
+    	
+    	if (ex.getCause() instanceof InvalidFormatException invalidEx && invalidEx.getTargetType() == LocalDate.class) {
+    		message = "Invalid date '" + invalidEx.getValue() + "'. Please enter a valid calender date in YYYY-MM-DD format.";
+    	}
+    	
+    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", message));
     }
     
     // HTTP 401: Invalid login credentials

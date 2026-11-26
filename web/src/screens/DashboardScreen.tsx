@@ -17,22 +17,7 @@ interface DashboardScreenProps {
 }
 
 export function DashboardScreen({ onSelectStep }: DashboardScreenProps) {
-  const defaultData = {
-    name: "",
-    email: "",
-    completedCount: 0,
-    progressPercentage: 0,
-    personalInformationCompleted: false,
-    readCompanyIntroduction: false,
-    acknowledgedCompanyPolicy: false,
-    checklistJoiningDate: false,
-    checklistFirstDay: false,
-    checklistOrientation: false,
-    joiningChecklistCompleted: false,
-    finalConfirmation: false,
-    updatedAt: "N/A",
-  };
-  const [data, setData] = useState<DashboardData>(defaultData);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

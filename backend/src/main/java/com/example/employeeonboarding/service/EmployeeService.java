@@ -178,9 +178,6 @@ public class EmployeeService {
 	public String finishOnboarding() {
 		OnboardingProgress progress = getProgressByUserId(getCurrentUserId());
 		
-		if (progress.isFinalConfirmation()) 
-			return "Onboarding already completed! This message shouldn't be visible.";
-		
 		boolean allFourStepsFinished = progress.isPersonalInformationCompleted()
 				&& progress.isReadCompanyIntroduction()
 				&& progress.isAcknowledgedCompanyPolicy()

@@ -43,12 +43,12 @@ export interface DashboardData {
 }
 
 export interface PersonalInfo {
-  fullName?: string | undefined;
-  phoneNumber?: string | undefined;
-  dateOfBirth?: string | undefined;
-  emergencyContactName?: string | undefined;
-  emergencyContactNumber?: string | undefined;
-  address?: string | undefined;
+  fullName: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
+  address: string;
 }
 
 export interface ChecklistProgress {

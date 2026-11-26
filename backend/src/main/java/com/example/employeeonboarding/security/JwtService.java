@@ -65,19 +65,4 @@ public class JwtService {
                 .getPayload();
     }
 
-	public String encodePassword(@NotBlank(message = "Password is required") String password) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String hashPassword(
-			@NotBlank(message = "Password is required") @Size(min = 8, message = "Password must be at least 8 characters long") String password) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean passwordHashmatches(String pass1, String pass2) {
-	
-		return false;
-	}
 }
